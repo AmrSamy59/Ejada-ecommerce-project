@@ -3,8 +3,12 @@ package com.ejada.ecommerce.service;
 import com.ejada.ecommerce.dto.ProductDto;
 import com.ejada.ecommerce.entity.Product;
 import com.ejada.ecommerce.exception.ResourceNotFoundException;
+import com.ejada.ecommerce.mapper.ProductMapper;
 import com.ejada.ecommerce.repository.ProductRepository;
+import com.ejada.ecommerce.specification.ProductSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,32 +17,30 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
-    public List<ProductDto.Response> getAllProducts() {
-        return productRepository.findAll().stream()
-                .map(this::mapToResponse)
+    public List<ProductDto.Response> getAllProducts(String name, BigDecimal minPrice, BigDecimal maxPrice) {
+        Specification<Product> spec = ProductSpecification.filterProducts(name, minPrice, maxPrice);
+        return productRepository.findAll(spec).stream()
+                .map(productMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public ProductDto.Response getProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
-        return mapToResponse(product);
+        return productMapper.toDto(product);
     }
 
     public ProductDto.Response createProduct(ProductDto.Request request) {
-        Product product = Product.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .price(request.getPrice())
-                .stockQuantity(request.getStockQuantity())
-                .build();
+        Product product = productMapper.toEntity(request);
         Product savedProduct = productRepository.save(product);
-        return mapToResponse(savedProduct);
+        return productMapper.toDto(savedProduct);
     }
 
     public ProductDto.Response updateProduct(Long id, ProductDto.Request request) {
@@ -51,22 +53,12 @@ public class ProductService {
         product.setStockQuantity(request.getStockQuantity());
 
         Product updatedProduct = productRepository.save(product);
-        return mapToResponse(updatedProduct);
+        return productMapper.toDto(updatedProduct);
     }
 
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         productRepository.delete(product);
-    }
-
-    private ProductDto.Response mapToResponse(Product product) {
-        ProductDto.Response response = new ProductDto.Response();
-        response.setId(product.getId());
-        response.setName(product.getName());
-        response.setDescription(product.getDescription());
-        response.setPrice(product.getPrice());
-        response.setStockQuantity(product.getStockQuantity());
-        return response;
     }
 }

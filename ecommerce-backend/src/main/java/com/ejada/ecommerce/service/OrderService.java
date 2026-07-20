@@ -7,6 +7,7 @@ import com.ejada.ecommerce.entity.OrderStatus;
 import com.ejada.ecommerce.entity.Product;
 import com.ejada.ecommerce.entity.User;
 import com.ejada.ecommerce.exception.ResourceNotFoundException;
+import com.ejada.ecommerce.mapper.OrderMapper;
 import com.ejada.ecommerce.repository.OrderRepository;
 import com.ejada.ecommerce.repository.ProductRepository;
 import com.ejada.ecommerce.repository.UserRepository;
@@ -24,11 +25,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final OrderMapper orderMapper;
 
-    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository) {
+    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository, OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.orderMapper = orderMapper;
     }
 
     @Transactional
@@ -69,38 +72,18 @@ public class OrderService {
         order.setTotalAmount(totalAmount);
         Order savedOrder = orderRepository.save(order);
 
-        return mapToResponse(savedOrder);
+        return orderMapper.toDto(savedOrder);
     }
 
     public List<OrderDto.Response> getUserOrders(Long userId) {
         return orderRepository.findByUserId(userId).stream()
-                .map(this::mapToResponse)
+                .map(orderMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public List<OrderDto.Response> getAllOrders() {
         return orderRepository.findAll().stream()
-                .map(this::mapToResponse)
+                .map(orderMapper::toDto)
                 .collect(Collectors.toList());
-    }
-
-    private OrderDto.Response mapToResponse(Order order) {
-        OrderDto.Response response = new OrderDto.Response();
-        response.setId(order.getId());
-        response.setOrderDate(order.getOrderDate());
-        response.setStatus(order.getStatus());
-        response.setTotalAmount(order.getTotalAmount());
-        
-        List<OrderDto.OrderItemResponseDto> items = order.getOrderItems().stream().map(item -> {
-            OrderDto.OrderItemResponseDto itemDto = new OrderDto.OrderItemResponseDto();
-            itemDto.setProductId(item.getProduct().getId());
-            itemDto.setProductName(item.getProduct().getName());
-            itemDto.setQuantity(item.getQuantity());
-            itemDto.setPriceAtPurchase(item.getPriceAtPurchase());
-            return itemDto;
-        }).collect(Collectors.toList());
-        
-        response.setItems(items);
-        return response;
     }
 }

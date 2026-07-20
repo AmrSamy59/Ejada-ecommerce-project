@@ -1,6 +1,8 @@
 package com.ejada.ecommerce.service;
 
 import com.ejada.ecommerce.dto.AuthDto;
+import com.ejada.ecommerce.exception.ResourceConflictException;
+import com.ejada.ecommerce.security.SessionTokenService;
 import com.ejada.ecommerce.entity.Role;
 import com.ejada.ecommerce.entity.User;
 import com.ejada.ecommerce.repository.RoleRepository;
@@ -22,23 +24,26 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final SessionTokenService SessionTokenService;
 
     public AuthService(UserRepository userRepository, RoleRepository roleRepository,
                        PasswordEncoder passwordEncoder, JwtService jwtService,
-                       AuthenticationManager authenticationManager) {
+                       AuthenticationManager authenticationManager,
+                       SessionTokenService SessionTokenService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.SessionTokenService = SessionTokenService;
     }
 
     public AuthDto.AuthResponse register(AuthDto.RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Error: Username is already taken!");
+            throw new ResourceConflictException("Error: Username is already taken!");
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Error: Email is already in use!");
+            throw new ResourceConflictException("Error: Email is already in use!");
         }
 
         Role userRole = roleRepository.findByName("USER")
@@ -56,7 +61,8 @@ public class AuthService {
         userRepository.save(user);
 
         var jwtToken = jwtService.generateToken(new CustomUserDetails(user));
-        return new AuthDto.AuthResponse(jwtToken);
+        var SessionToken = SessionTokenService.createSessionToken(user.getId());
+        return new AuthDto.AuthResponse(jwtToken, SessionToken.getToken());
     }
 
     public AuthDto.AuthResponse authenticate(AuthDto.LoginRequest request) {
@@ -66,6 +72,11 @@ public class AuthService {
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         var jwtToken = jwtService.generateToken(new CustomUserDetails(user));
-        return new AuthDto.AuthResponse(jwtToken);
+        
+        // Delete old refresh tokens if desired, or just create a new one
+        SessionTokenService.deleteByUserId(user.getId());
+        var SessionToken = SessionTokenService.createSessionToken(user.getId());
+        
+        return new AuthDto.AuthResponse(jwtToken, SessionToken.getToken());
     }
 }
