@@ -16,8 +16,12 @@ import com.ejada.ecommerce.entity.SessionToken;
 import com.ejada.ecommerce.security.CustomUserDetails;
 import com.ejada.ecommerce.exception.InvalidSessionException;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "Endpoints for user authentication and registration")
 public class AuthController {
 
     private final AuthService authService;
@@ -31,16 +35,19 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Register a new user")
     public ResponseEntity<AuthDto.AuthResponse> register(@Valid @RequestBody AuthDto.RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login and get tokens")
     public ResponseEntity<AuthDto.AuthResponse> login(@Valid @RequestBody AuthDto.LoginRequest request) {
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
     @PostMapping("/refresh")
+    @Operation(summary = "Refresh access token using session token")
     public ResponseEntity<TokenRefreshResponse> SessionToken(@Valid @RequestBody TokenRefreshRequest request) {
         String requestSessionToken = request.getSessionToken();
 

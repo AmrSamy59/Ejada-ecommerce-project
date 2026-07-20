@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/orders")
+@Tag(name = "Orders", description = "Endpoints for order management")
 public class OrderController {
 
     private final OrderService orderService;
@@ -24,6 +28,7 @@ public class OrderController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Operation(summary = "Place a new order")
     public ResponseEntity<OrderDto.Response> placeOrder(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody OrderDto.Request request) {
@@ -32,12 +37,14 @@ public class OrderController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Operation(summary = "Get current user's orders")
     public ResponseEntity<List<OrderDto.Response>> getMyOrders(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getUserOrders(userDetails.getId()));
     }
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all orders (Admin only)")
     public ResponseEntity<List<OrderDto.Response>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
