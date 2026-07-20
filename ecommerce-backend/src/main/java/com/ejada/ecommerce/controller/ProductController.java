@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -21,8 +21,11 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDto.Response>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<List<ProductDto.Response>> getAllProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+        return ResponseEntity.ok(productService.getAllProducts(name, minPrice, maxPrice));
     }
 
     @GetMapping("/{id}")

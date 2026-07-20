@@ -37,10 +37,12 @@ public class AuthDto {
     @Data
     public static class AuthResponse {
         private String token;
+        private String SessionToken;
         private String type = "Bearer";
 
-        public AuthResponse(String token) {
+        public AuthResponse(String token, String SessionToken) {
             this.token = token;
+            this.SessionToken = SessionToken;
         }
     }
 }
