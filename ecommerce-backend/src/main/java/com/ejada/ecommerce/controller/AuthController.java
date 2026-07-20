@@ -18,6 +18,7 @@ import com.ejada.ecommerce.exception.InvalidSessionException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -38,6 +39,13 @@ public class AuthController {
     @Operation(summary = "Register a new user")
     public ResponseEntity<AuthDto.AuthResponse> register(@Valid @RequestBody AuthDto.RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/register-admin")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @Operation(summary = "Register a new admin (Super Admin only)")
+    public ResponseEntity<AuthDto.AuthResponse> registerAdmin(@Valid @RequestBody AuthDto.RegisterRequest request) {
+        return ResponseEntity.ok(authService.registerAdmin(request));
     }
 
     @PostMapping("/login")

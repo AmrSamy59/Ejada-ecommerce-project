@@ -65,6 +65,33 @@ public class AuthService {
         return new AuthDto.AuthResponse(jwtToken, SessionToken.getToken());
     }
 
+    public AuthDto.AuthResponse registerAdmin(AuthDto.RegisterRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new ResourceConflictException("Error: Username is already taken!");
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new ResourceConflictException("Error: Email is already in use!");
+        }
+
+        Role adminRole = roleRepository.findByName("ADMIN")
+                .orElseGet(() -> roleRepository.save(Role.builder().name("ADMIN").build()));
+
+        User user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .roles(Set.of(adminRole))
+                .build();
+
+        userRepository.save(user);
+
+        var jwtToken = jwtService.generateToken(new CustomUserDetails(user));
+        var SessionToken = SessionTokenService.createSessionToken(user.getId());
+        return new AuthDto.AuthResponse(jwtToken, SessionToken.getToken());
+    }
+
     public AuthDto.AuthResponse authenticate(AuthDto.LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
