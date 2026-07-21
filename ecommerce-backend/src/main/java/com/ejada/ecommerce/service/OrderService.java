@@ -3,6 +3,7 @@ package com.ejada.ecommerce.service;
 import com.ejada.ecommerce.dto.order.OrderRequest;
 import com.ejada.ecommerce.dto.order.OrderItemRequest;
 import com.ejada.ecommerce.dto.order.OrderResponse;
+import com.ejada.ecommerce.dto.common.PageResponse;
 import com.ejada.ecommerce.entity.Order;
 import com.ejada.ecommerce.entity.OrderItem;
 import com.ejada.ecommerce.entity.OrderStatus;
@@ -13,6 +14,9 @@ import com.ejada.ecommerce.mapper.OrderMapper;
 import com.ejada.ecommerce.repository.OrderRepository;
 import com.ejada.ecommerce.repository.ProductRepository;
 import com.ejada.ecommerce.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -72,16 +76,26 @@ public class OrderService {
         return orderMapper.toDto(savedOrder);
     }
 
-    public List<OrderResponse> getUserOrders(Long userId) {
-        return orderRepository.findByUserId(userId).stream()
+    public PageResponse<OrderResponse> getUserOrders(Long userId, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Order> orders = orderRepository.findByUserId(userId, pageable);
+        
+        List<OrderResponse> content = orders.getContent().stream()
                 .map(orderMapper::toDto)
                 .collect(Collectors.toList());
+                
+        return new PageResponse<>(content, orders.getNumber(), orders.getSize(), orders.getTotalElements(), orders.getTotalPages(), orders.isLast());
     }
 
-    public List<OrderResponse> getAllOrders() {
-        return orderRepository.findAll().stream()
+    public PageResponse<OrderResponse> getAllOrders(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Order> orders = orderRepository.findAll(pageable);
+        
+        List<OrderResponse> content = orders.getContent().stream()
                 .map(orderMapper::toDto)
                 .collect(Collectors.toList());
+                
+        return new PageResponse<>(content, orders.getNumber(), orders.getSize(), orders.getTotalElements(), orders.getTotalPages(), orders.isLast());
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package com.ejada.ecommerce.controller;
 import com.ejada.ecommerce.dto.product.ProductRequest;
 import com.ejada.ecommerce.dto.product.ProductResponse;
 import com.ejada.ecommerce.dto.common.ApiResponse;
+import com.ejada.ecommerce.dto.common.PageResponse;
 import com.ejada.ecommerce.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
-import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,11 +26,13 @@ public class ProductController {
 
     @GetMapping
     @Operation(summary = "Get all products with optional filters")
-    public ResponseEntity<List<ProductResponse>> getAllProducts(
+    public ResponseEntity<PageResponse<ProductResponse>> getAllProducts(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice) {
-        return ResponseEntity.ok(productService.getAllProducts(name, minPrice, maxPrice));
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(productService.getAllProducts(name, minPrice, maxPrice, page, size));
     }
 
     @GetMapping("/{id}")

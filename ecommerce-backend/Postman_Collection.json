@@ -198,11 +198,15 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "http://localhost:8081/api/products",
+              "raw": "http://localhost:8081/api/products?page=0&size=10",
               "protocol": "http",
               "host": ["localhost"],
               "port": "8081",
-              "path": ["api", "products"]
+              "path": ["api", "products"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
             }
           }
         },
@@ -314,11 +318,15 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "http://localhost:8081/api/orders",
+              "raw": "http://localhost:8081/api/orders?page=0&size=10",
               "protocol": "http",
               "host": ["localhost"],
               "port": "8081",
-              "path": ["api", "orders"]
+              "path": ["api", "orders"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
             }
           }
         },
@@ -330,11 +338,15 @@
               { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
             ],
             "url": {
-              "raw": "http://localhost:8081/api/orders/all",
+              "raw": "http://localhost:8081/api/orders/all?page=0&size=10",
               "protocol": "http",
               "host": ["localhost"],
               "port": "8081",
-              "path": ["api", "orders", "all"]
+              "path": ["api", "orders", "all"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
             }
           }
         },

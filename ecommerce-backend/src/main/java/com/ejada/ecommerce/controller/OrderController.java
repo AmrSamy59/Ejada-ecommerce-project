@@ -2,6 +2,7 @@ package com.ejada.ecommerce.controller;
 
 import com.ejada.ecommerce.dto.order.OrderRequest;
 import com.ejada.ecommerce.dto.order.OrderResponse;
+import com.ejada.ecommerce.dto.common.PageResponse;
 import com.ejada.ecommerce.dto.order.UpdateOrderStatusRequest;
 import com.ejada.ecommerce.security.CustomUserDetails;
 import com.ejada.ecommerce.service.OrderService;
@@ -12,8 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,15 +37,20 @@ public class OrderController {
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     @Operation(summary = "Get current user's orders")
-    public ResponseEntity<List<OrderResponse>> getMyOrders(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.ok(orderService.getUserOrders(userDetails.getId()));
+    public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(orderService.getUserOrders(userDetails.getId(), page, size));
     }
 
     @GetMapping("/all")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @Operation(summary = "Get all orders (Admin only)")
-    public ResponseEntity<List<OrderResponse>> getAllOrders() {
-        return ResponseEntity.ok(orderService.getAllOrders());
+    public ResponseEntity<PageResponse<OrderResponse>> getAllOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(orderService.getAllOrders(page, size));
     }
 
     @PatchMapping("/{id}/status")
