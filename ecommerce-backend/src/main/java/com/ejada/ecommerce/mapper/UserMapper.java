@@ -20,6 +20,7 @@ public interface UserMapper {
     User toEntity(RegisterRequest request);
 
     @Mapping(target = "roles", source = "roles", qualifiedByName = "mapRoles")
+    @Mapping(target = "isActive", source = "active")
     UserResponse toDto(User user);
 
     @Named("mapRoles")
