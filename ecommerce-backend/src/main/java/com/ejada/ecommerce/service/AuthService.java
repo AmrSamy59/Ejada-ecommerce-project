@@ -2,7 +2,7 @@ package com.ejada.ecommerce.service;
 
 import com.ejada.ecommerce.dto.AuthDto;
 import com.ejada.ecommerce.exception.ResourceConflictException;
-import com.ejada.ecommerce.security.SessionTokenService;
+import com.ejada.ecommerce.security.RefreshTokenService;
 import com.ejada.ecommerce.entity.Role;
 import com.ejada.ecommerce.entity.User;
 import com.ejada.ecommerce.repository.RoleRepository;
@@ -24,18 +24,18 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final SessionTokenService SessionTokenService;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthService(UserRepository userRepository, RoleRepository roleRepository,
                        PasswordEncoder passwordEncoder, JwtService jwtService,
                        AuthenticationManager authenticationManager,
-                       SessionTokenService SessionTokenService) {
+                       RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
-        this.SessionTokenService = SessionTokenService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public AuthDto.AuthResponse register(AuthDto.RegisterRequest request) {
@@ -61,8 +61,8 @@ public class AuthService {
         userRepository.save(user);
 
         var jwtToken = jwtService.generateToken(new CustomUserDetails(user));
-        var SessionToken = SessionTokenService.createSessionToken(user.getId());
-        return new AuthDto.AuthResponse(jwtToken, SessionToken.getToken());
+        var refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        return new AuthDto.AuthResponse(jwtToken, refreshToken.getToken());
     }
 
     public AuthDto.AuthResponse registerAdmin(AuthDto.RegisterRequest request) {
@@ -88,8 +88,8 @@ public class AuthService {
         userRepository.save(user);
 
         var jwtToken = jwtService.generateToken(new CustomUserDetails(user));
-        var SessionToken = SessionTokenService.createSessionToken(user.getId());
-        return new AuthDto.AuthResponse(jwtToken, SessionToken.getToken());
+        var refreshToken = refreshTokenService.createRefreshToken(user.getId());
+        return new AuthDto.AuthResponse(jwtToken, refreshToken.getToken());
     }
 
     public AuthDto.AuthResponse authenticate(AuthDto.LoginRequest request) {
@@ -101,9 +101,9 @@ public class AuthService {
         var jwtToken = jwtService.generateToken(new CustomUserDetails(user));
         
         // Delete old refresh tokens if desired, or just create a new one
-        SessionTokenService.deleteByUserId(user.getId());
-        var SessionToken = SessionTokenService.createSessionToken(user.getId());
+        refreshTokenService.deleteByUserId(user.getId());
+        var refreshToken = refreshTokenService.createRefreshToken(user.getId());
         
-        return new AuthDto.AuthResponse(jwtToken, SessionToken.getToken());
+        return new AuthDto.AuthResponse(jwtToken, refreshToken.getToken());
     }
 }

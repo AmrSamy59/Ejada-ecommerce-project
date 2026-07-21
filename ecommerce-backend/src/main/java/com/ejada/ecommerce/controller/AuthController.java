@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.ejada.ecommerce.dto.TokenRefreshRequest;
 import com.ejada.ecommerce.dto.TokenRefreshResponse;
-import com.ejada.ecommerce.security.SessionTokenService;
+import com.ejada.ecommerce.security.RefreshTokenService;
 import com.ejada.ecommerce.security.JwtService;
-import com.ejada.ecommerce.entity.SessionToken;
+import com.ejada.ecommerce.entity.RefreshToken;
 import com.ejada.ecommerce.security.CustomUserDetails;
 import com.ejada.ecommerce.exception.InvalidSessionException;
 
@@ -26,12 +26,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public class AuthController {
 
     private final AuthService authService;
-    private final SessionTokenService SessionTokenService;
+    private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
 
-    public AuthController(AuthService authService, SessionTokenService SessionTokenService, JwtService jwtService) {
+    public AuthController(AuthService authService, RefreshTokenService refreshTokenService, JwtService jwtService) {
         this.authService = authService;
-        this.SessionTokenService = SessionTokenService;
+        this.refreshTokenService = refreshTokenService;
         this.jwtService = jwtService;
     }
 
@@ -55,16 +55,16 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    @Operation(summary = "Refresh access token using session token")
-    public ResponseEntity<TokenRefreshResponse> SessionToken(@Valid @RequestBody TokenRefreshRequest request) {
-        String requestSessionToken = request.getSessionToken();
+    @Operation(summary = "Refresh access token using refresh token")
+    public ResponseEntity<TokenRefreshResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
 
-        return SessionTokenService.findByToken(requestSessionToken)
-                .map(SessionTokenService::verifyExpiration)
-                .map(SessionToken::getUser)
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
                 .map(user -> {
                     String token = jwtService.generateToken(new CustomUserDetails(user));
-                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestSessionToken));
+                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new InvalidSessionException("Refresh token is not in database!"));
     }

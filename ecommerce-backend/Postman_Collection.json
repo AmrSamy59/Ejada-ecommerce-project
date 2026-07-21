@@ -40,8 +40,8 @@
                   "if (jsonData.token) {",
                   "    pm.collectionVariables.set(\"jwt_token\", jsonData.token);",
                   "}",
-                  "if (jsonData.sessionToken) {",
-                  "    pm.collectionVariables.set(\"session_token\", jsonData.sessionToken);",
+                  "if (jsonData.refreshToken) {",
+                  "    pm.collectionVariables.set(\"refresh_token\", jsonData.refreshToken);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -89,7 +89,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"sessionToken\": \"{{session_token}}\"\n}"
+              "raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
             },
             "url": {
               "raw": "http://localhost:8081/api/auth/refresh",
@@ -280,7 +280,7 @@
       "type": "string"
     },
     {
-      "key": "session_token",
+      "key": "refresh_token",
       "value": "",
       "type": "string"
     }
