@@ -2,6 +2,7 @@ package com.ejada.ecommerce.controller;
 
 import com.ejada.ecommerce.dto.order.OrderRequest;
 import com.ejada.ecommerce.dto.order.OrderResponse;
+import com.ejada.ecommerce.dto.order.UpdateOrderStatusRequest;
 import com.ejada.ecommerce.security.CustomUserDetails;
 import com.ejada.ecommerce.service.OrderService;
 import jakarta.validation.Valid;
@@ -46,5 +47,14 @@ public class OrderController {
     @Operation(summary = "Get all orders (Admin only)")
     public ResponseEntity<List<OrderResponse>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
+    }
+
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @Operation(summary = "Update order status (Admin only)")
+    public ResponseEntity<OrderResponse> updateOrderStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateOrderStatusRequest request) {
+        return ResponseEntity.ok(orderService.updateOrderStatus(id, request.getStatus()));
     }
 }

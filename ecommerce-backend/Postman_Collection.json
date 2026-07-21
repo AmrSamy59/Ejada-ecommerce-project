@@ -279,6 +279,27 @@
               "path": ["api", "orders", "all"]
             }
           }
+        },
+        {
+          "name": "Update Order Status (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SHIPPED\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/orders/1/status",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "orders", "1", "status"]
+            }
+          }
         }
       ]
     }

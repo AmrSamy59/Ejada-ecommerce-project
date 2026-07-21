@@ -16,9 +16,9 @@
     "roles": ["ADMIN"]
   },
   {
-    "username": "user",
+    "username": "testuser",
     "email": "user@ejada.com",
-    "password": "user123",
+    "password": "password123",
     "firstName": "Test",
     "lastName": "User",
     "roles": ["USER"]
