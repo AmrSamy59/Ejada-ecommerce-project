@@ -2,16 +2,25 @@ package com.ejada.ecommerce.service;
 
 import com.ejada.ecommerce.entity.Role;
 import com.ejada.ecommerce.entity.User;
+import com.ejada.ecommerce.entity.Product;
 import com.ejada.ecommerce.repository.RoleRepository;
 import com.ejada.ecommerce.repository.UserRepository;
+import com.ejada.ecommerce.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.math.BigDecimal;
+import com.ejada.ecommerce.dto.auth.UserSeedData;
 
 @Component
 @RequiredArgsConstructor
@@ -19,21 +28,15 @@ public class DataSeeder implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${app.security.superadmin.username:superuser}")
-    private String superAdminUsername;
-
-    @Value("${app.security.superadmin.password:superpassword}")
-    private String superAdminPassword;
-
-    @Value("${app.security.superadmin.email:super@ejada.com}")
-    private String superAdminEmail;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void run(String... args) throws Exception {
         seedRoles();
-        seedSuperAdmin();
+        seedUsers();
+        seedProducts();
     }
 
     private void seedRoles() {
@@ -45,20 +48,44 @@ public class DataSeeder implements CommandLineRunner {
         }
     }
 
-    private void seedSuperAdmin() {
-        if (!userRepository.existsByUsername(superAdminUsername)) {
-            Role superAdminRole = roleRepository.findByName("SUPER_ADMIN").orElseThrow();
+    private void seedUsers() {
+        // Seed Users from JSON
+        try {
+            InputStream inputStream = new ClassPathResource("data/users.json").getInputStream();
+            List<UserSeedData> seedUsers = objectMapper.readValue(inputStream, new TypeReference<List<UserSeedData>>() {});
             
-            User superAdmin = User.builder()
-                    .username(superAdminUsername)
-                    .email(superAdminEmail)
-                    .password(passwordEncoder.encode(superAdminPassword))
-                    .firstName("Super")
-                    .lastName("Admin")
-                    .roles(Set.of(superAdminRole))
-                    .build();
-                    
-            userRepository.save(superAdmin);
+            for (UserSeedData seedData : seedUsers) {
+                if (!userRepository.existsByUsername(seedData.getUsername())) {
+                    Set<Role> userRoles = seedData.getRoles().stream()
+                            .map(roleName -> roleRepository.findByName(roleName).orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
+                            .collect(Collectors.toSet());
+                            
+                    User user = User.builder()
+                            .username(seedData.getUsername())
+                            .email(seedData.getEmail())
+                            .password(passwordEncoder.encode(seedData.getPassword()))
+                            .firstName(seedData.getFirstName())
+                            .lastName(seedData.getLastName())
+                            .roles(userRoles)
+                            .build();
+                            
+                    userRepository.save(user);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to seed users from JSON: " + e.getMessage());
+        }
+    }
+
+    private void seedProducts() {
+        if (productRepository.count() == 0) {
+            try {
+                InputStream inputStream = new ClassPathResource("data/products.json").getInputStream();
+                List<Product> defaultProducts = objectMapper.readValue(inputStream, new TypeReference<List<Product>>() {});
+                productRepository.saveAll(defaultProducts);
+            } catch (Exception e) {
+                System.err.println("Failed to seed products from JSON: " + e.getMessage());
+            }
         }
     }
 }

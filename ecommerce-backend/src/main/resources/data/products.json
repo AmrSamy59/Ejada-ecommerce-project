@@ -1,0 +1,32 @@
+[
+  {
+    "name": "MacBook Pro M3",
+    "description": "Latest Apple MacBook Pro with M3 chip, 16GB RAM, 512GB SSD",
+    "price": 1999.99,
+    "stockQuantity": 50
+  },
+  {
+    "name": "Sony WH-1000XM5",
+    "description": "Premium noise-canceling wireless headphones",
+    "price": 399.99,
+    "stockQuantity": 120
+  },
+  {
+    "name": "Samsung Galaxy S24 Ultra",
+    "description": "Flagship Android smartphone with AI features and 1TB storage",
+    "price": 1299.99,
+    "stockQuantity": 80
+  },
+  {
+    "name": "Keychron Q1 Pro",
+    "description": "Wireless custom mechanical keyboard with aluminum body",
+    "price": 199.99,
+    "stockQuantity": 30
+  },
+  {
+    "name": "Dell UltraSharp 32 4K Monitor",
+    "description": "32-inch 4K USB-C hub monitor for professionals",
+    "price": 899.99,
+    "stockQuantity": 45
+  }
+]

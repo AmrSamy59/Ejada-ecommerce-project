@@ -1,0 +1,26 @@
+[
+  {
+    "username": "superuser",
+    "email": "super@ejada.com",
+    "password": "superpassword",
+    "firstName": "Super",
+    "lastName": "Admin",
+    "roles": ["SUPER_ADMIN"]
+  },
+  {
+    "username": "admin",
+    "email": "admin@ejada.com",
+    "password": "admin123",
+    "firstName": "Test",
+    "lastName": "Admin",
+    "roles": ["ADMIN"]
+  },
+  {
+    "username": "user",
+    "email": "user@ejada.com",
+    "password": "user123",
+    "firstName": "Test",
+    "lastName": "User",
+    "roles": ["USER"]
+  }
+]
