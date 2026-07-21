@@ -133,6 +133,27 @@
       "name": "Users",
       "item": [
         {
+          "name": "Get All Users (ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/users?name=test&page=0&size=10",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "users"],
+              "query": [
+                { "key": "name", "value": "test" },
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
           "name": "Edit User (ADMIN)",
           "request": {
             "method": "PUT",

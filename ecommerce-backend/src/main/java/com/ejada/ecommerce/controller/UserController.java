@@ -4,8 +4,10 @@ import com.ejada.ecommerce.dto.auth.AuthResponse;
 import com.ejada.ecommerce.dto.auth.RegisterRequest;
 import com.ejada.ecommerce.dto.user.UpdateUserRequest;
 import com.ejada.ecommerce.dto.user.UserResponse;
+import com.ejada.ecommerce.dto.common.PageResponse;
 import com.ejada.ecommerce.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +33,19 @@ public class UserController {
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @Operation(summary = "Register a new admin (Super Admin only)")
     public ResponseEntity<AuthResponse> registerAdmin(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(userService.registerAdmin(request));
+        return new ResponseEntity<>(userService.registerAdmin(request), HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @Operation(summary = "Get all users with optional filters (Admin only)")
+    public ResponseEntity<PageResponse<UserResponse>> getAllUsers(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Boolean isActive,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(userService.getAllUsers(name, email, isActive, page, size));
     }
 
     @PutMapping("/{id}")

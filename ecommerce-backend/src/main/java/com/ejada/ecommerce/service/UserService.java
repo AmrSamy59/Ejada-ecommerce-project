@@ -2,6 +2,7 @@ package com.ejada.ecommerce.service;
 
 import com.ejada.ecommerce.dto.auth.AuthResponse;
 import com.ejada.ecommerce.dto.auth.RegisterRequest;
+import com.ejada.ecommerce.dto.common.PageResponse;
 import com.ejada.ecommerce.dto.user.UpdateUserRequest;
 import com.ejada.ecommerce.dto.user.UserResponse;
 import com.ejada.ecommerce.entity.Role;
@@ -14,10 +15,17 @@ import com.ejada.ecommerce.repository.UserRepository;
 import com.ejada.ecommerce.security.CustomUserDetails;
 import com.ejada.ecommerce.security.JwtService;
 import com.ejada.ecommerce.security.RefreshTokenService;
+import com.ejada.ecommerce.specification.UserSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -95,13 +103,25 @@ public class UserService {
         return userMapper.toDto(savedUser);
     }
 
+    public PageResponse<UserResponse> getAllUsers(String name, String email, Boolean isActive, int pageNo, int pageSize) {
+        Specification<User> spec = UserSpecification.filterUsers(name, email, isActive);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<User> users = userRepository.findAll(spec, pageable);
+        
+        List<UserResponse> content = users.getContent().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+                
+        return new PageResponse<>(content, users.getNumber(), users.getSize(), users.getTotalElements(), users.getTotalPages(), users.isLast());
+    }
+
     public UserResponse updateUserStatus(Long userId, boolean isActive) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
         user.setActive(isActive);
         
-        // Optionally, we could delete refresh tokens if user is deactivated
+        // If user is deactivated, delete refresh tokens
         if (!isActive) {
             refreshTokenService.deleteByUserId(user.getId());
         }
