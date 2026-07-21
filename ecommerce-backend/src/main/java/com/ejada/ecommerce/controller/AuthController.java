@@ -2,7 +2,6 @@ package com.ejada.ecommerce.controller;
 
 import com.ejada.ecommerce.dto.auth.AuthResponse;
 import com.ejada.ecommerce.dto.auth.LoginRequest;
-import com.ejada.ecommerce.dto.auth.RegisterRequest;
 import com.ejada.ecommerce.dto.auth.TokenRefreshRequest;
 import com.ejada.ecommerce.service.AuthService;
 import jakarta.validation.Valid;
@@ -21,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,18 +31,7 @@ public class AuthController {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
 
-    @PostMapping("/register")
-    @Operation(summary = "Register a new user")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
-    }
 
-    @PostMapping("/register-admin")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    @Operation(summary = "Register a new admin (Super Admin only)")
-    public ResponseEntity<AuthResponse> registerAdmin(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.registerAdmin(request));
-    }
 
     @PostMapping("/login")
     @Operation(summary = "Login and get tokens")

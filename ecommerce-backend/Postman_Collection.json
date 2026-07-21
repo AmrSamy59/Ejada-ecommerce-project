@@ -21,11 +21,11 @@
               "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\",\n  \"email\": \"testuser@example.com\",\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8081/api/auth/register",
+              "raw": "http://localhost:8081/api/users/register",
               "protocol": "http",
               "host": ["localhost"],
               "port": "8081",
-              "path": ["api", "auth", "register"]
+              "path": ["api", "users", "register"]
             }
           }
         },
@@ -119,11 +119,69 @@
               "raw": "{\n  \"username\": \"admin1\",\n  \"password\": \"password123\",\n  \"email\": \"admin1@example.com\",\n  \"firstName\": \"Admin\",\n  \"lastName\": \"One\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8081/api/auth/register-admin",
+              "raw": "http://localhost:8081/api/users/register-admin",
               "protocol": "http",
               "host": ["localhost"],
               "port": "8081",
-              "path": ["api", "auth", "register-admin"]
+              "path": ["api", "users", "register-admin"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Edit User (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"UpdatedFirst\",\n  \"lastName\": \"UpdatedLast\",\n  \"email\": \"updated@example.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/users/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deactivate User (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/users/1/deactivate",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "users", "1", "deactivate"]
+            }
+          }
+        },
+        {
+          "name": "Activate User (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/users/1/activate",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "users", "1", "activate"]
             }
           }
         }
