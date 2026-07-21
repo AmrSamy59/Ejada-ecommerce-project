@@ -27,7 +27,7 @@ public class OrderController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     @Operation(summary = "Place a new order")
     public ResponseEntity<OrderDto.Response> placeOrder(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -36,14 +36,14 @@ public class OrderController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     @Operation(summary = "Get current user's orders")
     public ResponseEntity<List<OrderDto.Response>> getMyOrders(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getUserOrders(userDetails.getId()));
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @Operation(summary = "Get all orders (Admin only)")
     public ResponseEntity<List<OrderDto.Response>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
