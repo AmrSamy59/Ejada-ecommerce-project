@@ -1,6 +1,7 @@
 package com.ejada.ecommerce.controller;
 
 import com.ejada.ecommerce.dto.ProductDto;
+import com.ejada.ecommerce.dto.ApiResponse;
 import com.ejada.ecommerce.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -56,8 +57,8 @@ public class ProductController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @Operation(summary = "Delete a product by ID (Admin only)")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new ApiResponse("Product deleted successfully"));
     }
 }
