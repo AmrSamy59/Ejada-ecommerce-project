@@ -17,6 +17,7 @@ import com.ejada.ecommerce.security.JwtService;
 import com.ejada.ecommerce.entity.RefreshToken;
 import com.ejada.ecommerce.security.CustomUserDetails;
 import com.ejada.ecommerce.exception.InvalidSessionException;
+import lombok.RequiredArgsConstructor;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,18 +25,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 @Tag(name = "Authentication", description = "Endpoints for user authentication and registration")
 public class AuthController {
 
     private final AuthService authService;
-    private final RefreshTokenService refreshTokenService;
     private final JwtService jwtService;
-
-    public AuthController(AuthService authService, RefreshTokenService refreshTokenService, JwtService jwtService) {
-        this.authService = authService;
-        this.refreshTokenService = refreshTokenService;
-        this.jwtService = jwtService;
-    }
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/register")
     @Operation(summary = "Register a new user")

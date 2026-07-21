@@ -17,23 +17,18 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
-    private final HandlerExceptionResolver exceptionResolver;
-
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, 
-                          UserDetailsService userDetailsService,
-                          @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
-        this.jwtAuthFilter = jwtAuthFilter;
-        this.userDetailsService = userDetailsService;
-        this.exceptionResolver = exceptionResolver;
-    }
+    @Qualifier("handlerExceptionResolver")
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -41,9 +36,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) -> 
-                    exceptionResolver.resolveException(request, response, null, authException))
+                    handlerExceptionResolver.resolveException(request, response, null, authException))
                 .accessDeniedHandler((request, response, accessDeniedException) -> 
-                    exceptionResolver.resolveException(request, response, null, accessDeniedException))
+                    handlerExceptionResolver.resolveException(request, response, null, accessDeniedException))
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()

@@ -4,6 +4,7 @@ import com.ejada.ecommerce.entity.Role;
 import com.ejada.ecommerce.entity.User;
 import com.ejada.ecommerce.repository.RoleRepository;
 import com.ejada.ecommerce.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
@@ -27,12 +29,6 @@ public class DataSeeder implements CommandLineRunner {
 
     @Value("${app.security.superadmin.email:super@ejada.com}")
     private String superAdminEmail;
-
-    public DataSeeder(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.roleRepository = roleRepository;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Override
     public void run(String... args) throws Exception {

@@ -9,21 +9,18 @@ import com.ejada.ecommerce.repository.ProductRepository;
 import com.ejada.ecommerce.specification.ProductSpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
-
-    public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
-        this.productRepository = productRepository;
-        this.productMapper = productMapper;
-    }
 
     public List<ProductResponse> getAllProducts(String name, BigDecimal minPrice, BigDecimal maxPrice) {
         Specification<Product> spec = ProductSpecification.filterProducts(name, minPrice, maxPrice);

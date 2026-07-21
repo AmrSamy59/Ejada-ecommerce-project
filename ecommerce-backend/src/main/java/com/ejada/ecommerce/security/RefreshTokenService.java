@@ -8,11 +8,13 @@ import com.ejada.ecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class RefreshTokenService {
 
     @Value("${jwt.refresh-expiration}")
@@ -21,12 +23,6 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
     private final JwtService jwtService;
-
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserRepository userRepository, JwtService jwtService) {
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.userRepository = userRepository;
-        this.jwtService = jwtService;
-    }
 
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
