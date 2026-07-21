@@ -1,6 +1,7 @@
 package com.ejada.ecommerce.service;
 
-import com.ejada.ecommerce.dto.ProductDto;
+import com.ejada.ecommerce.dto.product.ProductRequest;
+import com.ejada.ecommerce.dto.product.ProductResponse;
 import com.ejada.ecommerce.entity.Product;
 import com.ejada.ecommerce.exception.ResourceNotFoundException;
 import com.ejada.ecommerce.mapper.ProductMapper;
@@ -24,26 +25,26 @@ public class ProductService {
         this.productMapper = productMapper;
     }
 
-    public List<ProductDto.Response> getAllProducts(String name, BigDecimal minPrice, BigDecimal maxPrice) {
+    public List<ProductResponse> getAllProducts(String name, BigDecimal minPrice, BigDecimal maxPrice) {
         Specification<Product> spec = ProductSpecification.filterProducts(name, minPrice, maxPrice);
         return productRepository.findAll(spec).stream()
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    public ProductDto.Response getProductById(Long id) {
+    public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         return productMapper.toDto(product);
     }
 
-    public ProductDto.Response createProduct(ProductDto.Request request) {
+    public ProductResponse createProduct(ProductRequest request) {
         Product product = productMapper.toEntity(request);
         Product savedProduct = productRepository.save(product);
         return productMapper.toDto(savedProduct);
     }
 
-    public ProductDto.Response updateProduct(Long id, ProductDto.Request request) {
+    public ProductResponse updateProduct(Long id, ProductRequest request) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
 

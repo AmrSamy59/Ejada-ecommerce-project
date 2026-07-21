@@ -1,4 +1,4 @@
-package com.ejada.ecommerce.dto;
+package com.ejada.ecommerce.dto.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,7 @@
 package com.ejada.ecommerce.controller;
 
-import com.ejada.ecommerce.dto.OrderDto;
+import com.ejada.ecommerce.dto.order.OrderRequest;
+import com.ejada.ecommerce.dto.order.OrderResponse;
 import com.ejada.ecommerce.security.CustomUserDetails;
 import com.ejada.ecommerce.service.OrderService;
 import jakarta.validation.Valid;
@@ -29,23 +30,23 @@ public class OrderController {
     @PostMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     @Operation(summary = "Place a new order")
-    public ResponseEntity<OrderDto.Response> placeOrder(
+    public ResponseEntity<OrderResponse> placeOrder(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @Valid @RequestBody OrderDto.Request request) {
+            @Valid @RequestBody OrderRequest request) {
         return new ResponseEntity<>(orderService.placeOrder(userDetails.getId(), request), HttpStatus.CREATED);
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
     @Operation(summary = "Get current user's orders")
-    public ResponseEntity<List<OrderDto.Response>> getMyOrders(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<List<OrderResponse>> getMyOrders(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getUserOrders(userDetails.getId()));
     }
 
     @GetMapping("/all")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @Operation(summary = "Get all orders (Admin only)")
-    public ResponseEntity<List<OrderDto.Response>> getAllOrders() {
+    public ResponseEntity<List<OrderResponse>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 }

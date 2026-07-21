@@ -1,14 +1,15 @@
 package com.ejada.ecommerce.mapper;
 
-import com.ejada.ecommerce.dto.ProductDto;
+import com.ejada.ecommerce.dto.product.ProductRequest;
+import com.ejada.ecommerce.dto.product.ProductResponse;
 import com.ejada.ecommerce.entity.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
-    ProductDto.Response toDto(Product product);
+    ProductResponse toDto(Product product);
     
     @Mapping(target = "id", ignore = true)
-    Product toEntity(ProductDto.Request request);
+    Product toEntity(ProductRequest request);
 }

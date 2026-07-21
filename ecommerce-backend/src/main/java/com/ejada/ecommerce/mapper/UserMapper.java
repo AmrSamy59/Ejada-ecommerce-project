@@ -1,6 +1,6 @@
 package com.ejada.ecommerce.mapper;
 
-import com.ejada.ecommerce.dto.AuthDto;
+import com.ejada.ecommerce.dto.auth.RegisterRequest;
 import com.ejada.ecommerce.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,5 +10,5 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "roles", ignore = true)
-    User toEntity(AuthDto.RegisterRequest request);
+    User toEntity(RegisterRequest request);
 }

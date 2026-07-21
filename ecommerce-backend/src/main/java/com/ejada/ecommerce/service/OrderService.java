@@ -1,6 +1,8 @@
 package com.ejada.ecommerce.service;
 
-import com.ejada.ecommerce.dto.OrderDto;
+import com.ejada.ecommerce.dto.order.OrderRequest;
+import com.ejada.ecommerce.dto.order.OrderItemRequest;
+import com.ejada.ecommerce.dto.order.OrderResponse;
 import com.ejada.ecommerce.entity.Order;
 import com.ejada.ecommerce.entity.OrderItem;
 import com.ejada.ecommerce.entity.OrderStatus;
@@ -35,7 +37,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDto.Response placeOrder(Long userId, OrderDto.Request request) {
+    public OrderResponse placeOrder(Long userId, OrderRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -47,7 +49,7 @@ public class OrderService {
 
         BigDecimal totalAmount = BigDecimal.ZERO;
 
-        for (OrderDto.OrderItemDto itemDto : request.getItems()) {
+        for (OrderItemRequest itemDto : request.getItems()) {
             Product product = productRepository.findById(itemDto.getProductId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + itemDto.getProductId()));
             
@@ -75,13 +77,13 @@ public class OrderService {
         return orderMapper.toDto(savedOrder);
     }
 
-    public List<OrderDto.Response> getUserOrders(Long userId) {
+    public List<OrderResponse> getUserOrders(Long userId) {
         return orderRepository.findByUserId(userId).stream()
                 .map(orderMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    public List<OrderDto.Response> getAllOrders() {
+    public List<OrderResponse> getAllOrders() {
         return orderRepository.findAll().stream()
                 .map(orderMapper::toDto)
                 .collect(Collectors.toList());

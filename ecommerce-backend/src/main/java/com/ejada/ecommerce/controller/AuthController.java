@@ -1,6 +1,9 @@
 package com.ejada.ecommerce.controller;
 
-import com.ejada.ecommerce.dto.AuthDto;
+import com.ejada.ecommerce.dto.auth.AuthResponse;
+import com.ejada.ecommerce.dto.auth.LoginRequest;
+import com.ejada.ecommerce.dto.auth.RegisterRequest;
+import com.ejada.ecommerce.dto.auth.TokenRefreshRequest;
 import com.ejada.ecommerce.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -8,8 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.ejada.ecommerce.dto.TokenRefreshRequest;
-import com.ejada.ecommerce.dto.TokenRefreshResponse;
+
 import com.ejada.ecommerce.security.RefreshTokenService;
 import com.ejada.ecommerce.security.JwtService;
 import com.ejada.ecommerce.entity.RefreshToken;
@@ -37,26 +39,26 @@ public class AuthController {
 
     @PostMapping("/register")
     @Operation(summary = "Register a new user")
-    public ResponseEntity<AuthDto.AuthResponse> register(@Valid @RequestBody AuthDto.RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
     @PostMapping("/register-admin")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     @Operation(summary = "Register a new admin (Super Admin only)")
-    public ResponseEntity<AuthDto.AuthResponse> registerAdmin(@Valid @RequestBody AuthDto.RegisterRequest request) {
+    public ResponseEntity<AuthResponse> registerAdmin(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.registerAdmin(request));
     }
 
     @PostMapping("/login")
     @Operation(summary = "Login and get tokens")
-    public ResponseEntity<AuthDto.AuthResponse> login(@Valid @RequestBody AuthDto.LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
     @PostMapping("/refresh")
     @Operation(summary = "Refresh access token using refresh token")
-    public ResponseEntity<TokenRefreshResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+    public ResponseEntity<AuthResponse> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
 
         return refreshTokenService.findByToken(requestRefreshToken)
@@ -64,7 +66,7 @@ public class AuthController {
                 .map(RefreshToken::getUser)
                 .map(user -> {
                     String token = jwtService.generateToken(new CustomUserDetails(user));
-                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+                    return ResponseEntity.ok(new AuthResponse(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new InvalidSessionException("Refresh token is not in database!"));
     }

@@ -1,6 +1,8 @@
 package com.ejada.ecommerce.service;
 
-import com.ejada.ecommerce.dto.AuthDto;
+import com.ejada.ecommerce.dto.auth.AuthResponse;
+import com.ejada.ecommerce.dto.auth.LoginRequest;
+import com.ejada.ecommerce.dto.auth.RegisterRequest;
 import com.ejada.ecommerce.exception.ResourceConflictException;
 import com.ejada.ecommerce.security.RefreshTokenService;
 import com.ejada.ecommerce.entity.Role;
@@ -38,7 +40,7 @@ public class AuthService {
         this.refreshTokenService = refreshTokenService;
     }
 
-    public AuthDto.AuthResponse register(AuthDto.RegisterRequest request) {
+    public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new ResourceConflictException("Error: Username is already taken!");
         }
@@ -62,10 +64,10 @@ public class AuthService {
 
         var jwtToken = jwtService.generateToken(new CustomUserDetails(user));
         var refreshToken = refreshTokenService.createRefreshToken(user.getId());
-        return new AuthDto.AuthResponse(jwtToken, refreshToken.getToken());
+        return new AuthResponse(jwtToken, refreshToken.getToken());
     }
 
-    public AuthDto.AuthResponse registerAdmin(AuthDto.RegisterRequest request) {
+    public AuthResponse registerAdmin(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new ResourceConflictException("Error: Username is already taken!");
         }
@@ -89,10 +91,10 @@ public class AuthService {
 
         var jwtToken = jwtService.generateToken(new CustomUserDetails(user));
         var refreshToken = refreshTokenService.createRefreshToken(user.getId());
-        return new AuthDto.AuthResponse(jwtToken, refreshToken.getToken());
+        return new AuthResponse(jwtToken, refreshToken.getToken());
     }
 
-    public AuthDto.AuthResponse authenticate(AuthDto.LoginRequest request) {
+    public AuthResponse authenticate(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
@@ -104,6 +106,6 @@ public class AuthService {
         refreshTokenService.deleteByUserId(user.getId());
         var refreshToken = refreshTokenService.createRefreshToken(user.getId());
         
-        return new AuthDto.AuthResponse(jwtToken, refreshToken.getToken());
+        return new AuthResponse(jwtToken, refreshToken.getToken());
     }
 }
