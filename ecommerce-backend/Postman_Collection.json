@@ -39,9 +39,13 @@
                   "var jsonData = pm.response.json();",
                   "if (jsonData.token) {",
                   "    pm.collectionVariables.set(\"jwt_token\", jsonData.token);",
+                  "    pm.environment.set(\"jwt_token\", jsonData.token);",
+                  "    pm.globals.set(\"jwt_token\", jsonData.token);",
                   "}",
                   "if (jsonData.refreshToken) {",
                   "    pm.collectionVariables.set(\"refresh_token\", jsonData.refreshToken);",
+                  "    pm.environment.set(\"refresh_token\", jsonData.refreshToken);",
+                  "    pm.globals.set(\"refresh_token\", jsonData.refreshToken);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -76,6 +80,8 @@
                   "var jsonData = pm.response.json();",
                   "if (jsonData.accessToken) {",
                   "    pm.collectionVariables.set(\"jwt_token\", jsonData.accessToken);",
+                  "    pm.environment.set(\"jwt_token\", jsonData.accessToken);",
+                  "    pm.globals.set(\"jwt_token\", jsonData.accessToken);",
                   "}"
                 ],
                 "type": "text/javascript"
@@ -130,7 +136,9 @@
           "name": "Get All Products",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
             "url": {
               "raw": "http://localhost:8081/api/products",
               "protocol": "http",
@@ -144,7 +152,9 @@
           "name": "Get Product By ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
             "url": {
               "raw": "http://localhost:8081/api/products/1",
               "protocol": "http",
