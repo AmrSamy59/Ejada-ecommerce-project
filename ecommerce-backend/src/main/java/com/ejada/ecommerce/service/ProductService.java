@@ -5,6 +5,7 @@ import com.ejada.ecommerce.dto.product.ProductResponse;
 import com.ejada.ecommerce.dto.common.PageResponse;
 import com.ejada.ecommerce.entity.Product;
 import com.ejada.ecommerce.exception.ResourceNotFoundException;
+import com.ejada.ecommerce.exception.ErrorCode;
 import com.ejada.ecommerce.mapper.ProductMapper;
 import com.ejada.ecommerce.repository.ProductRepository;
 import com.ejada.ecommerce.specification.ProductSpecification;
@@ -40,7 +41,7 @@ public class ProductService {
 
     public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id, ErrorCode.PRODUCT_NOT_FOUND));
         return productMapper.toDto(product);
     }
 
@@ -52,7 +53,7 @@ public class ProductService {
 
     public ProductResponse updateProduct(Long id, ProductRequest request) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id, ErrorCode.PRODUCT_NOT_FOUND));
 
         product.setName(request.getName());
         product.setDescription(request.getDescription());
@@ -65,7 +66,7 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id, ErrorCode.PRODUCT_NOT_FOUND));
         productRepository.delete(product);
     }
 }

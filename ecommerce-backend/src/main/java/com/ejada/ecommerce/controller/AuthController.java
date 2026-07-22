@@ -16,6 +16,7 @@ import com.ejada.ecommerce.security.JwtService;
 import com.ejada.ecommerce.entity.RefreshToken;
 import com.ejada.ecommerce.security.CustomUserDetails;
 import com.ejada.ecommerce.exception.InvalidSessionException;
+import com.ejada.ecommerce.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,6 +52,6 @@ public class AuthController {
                     String token = jwtService.generateToken(new CustomUserDetails(user));
                     return ResponseEntity.ok(new AuthResponse(token, requestRefreshToken));
                 })
-                .orElseThrow(() -> new InvalidSessionException("Refresh token is not in database!"));
+                .orElseThrow(() -> new InvalidSessionException("Refresh token is not in database!", ErrorCode.TOKEN_INVALID));
     }
 }

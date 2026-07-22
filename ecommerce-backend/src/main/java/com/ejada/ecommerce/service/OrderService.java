@@ -10,6 +10,8 @@ import com.ejada.ecommerce.entity.OrderStatus;
 import com.ejada.ecommerce.entity.Product;
 import com.ejada.ecommerce.entity.User;
 import com.ejada.ecommerce.exception.ResourceNotFoundException;
+import com.ejada.ecommerce.exception.BusinessRuleException;
+import com.ejada.ecommerce.exception.ErrorCode;
 import com.ejada.ecommerce.mapper.OrderMapper;
 import com.ejada.ecommerce.repository.OrderRepository;
 import com.ejada.ecommerce.repository.ProductRepository;
@@ -38,7 +40,7 @@ public class OrderService {
     @Transactional
     public OrderResponse placeOrder(Long userId, OrderRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found", ErrorCode.USER_NOT_FOUND));
 
         Order order = Order.builder()
                 .user(user)
@@ -50,10 +52,10 @@ public class OrderService {
 
         for (OrderItemRequest itemDto : request.getItems()) {
             Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + itemDto.getProductId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + itemDto.getProductId(), ErrorCode.PRODUCT_NOT_FOUND));
             
             if (product.getStockQuantity() < itemDto.getQuantity()) {
-                throw new RuntimeException("Not enough stock for product: " + product.getName());
+                throw new BusinessRuleException("Not enough stock for product: " + product.getName(), ErrorCode.INSUFFICIENT_STOCK);
             }
 
             product.setStockQuantity(product.getStockQuantity() - itemDto.getQuantity());
@@ -101,10 +103,10 @@ public class OrderService {
     @Transactional
     public OrderResponse updateOrderStatus(Long orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + orderId, ErrorCode.ORDER_NOT_FOUND));
         
         if (order.getStatus() == OrderStatus.CANCELLED) {
-            throw new RuntimeException("Order is already cancelled and cannot be modified.");
+            throw new BusinessRuleException("Order is already cancelled and cannot be modified.", ErrorCode.ORDER_ALREADY_CANCELLED);
         }
 
         if (status == OrderStatus.CANCELLED) {

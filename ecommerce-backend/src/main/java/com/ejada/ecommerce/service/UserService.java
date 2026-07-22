@@ -9,6 +9,7 @@ import com.ejada.ecommerce.entity.Role;
 import com.ejada.ecommerce.entity.User;
 import com.ejada.ecommerce.exception.ResourceConflictException;
 import com.ejada.ecommerce.exception.ResourceNotFoundException;
+import com.ejada.ecommerce.exception.ErrorCode;
 import com.ejada.ecommerce.mapper.UserMapper;
 import com.ejada.ecommerce.repository.RoleRepository;
 import com.ejada.ecommerce.repository.UserRepository;
@@ -40,10 +41,10 @@ public class UserService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new ResourceConflictException("Error: Username is already taken!");
+            throw new ResourceConflictException("Error: Username is already taken!", ErrorCode.USERNAME_ALREADY_EXISTS);
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new ResourceConflictException("Error: Email is already in use!");
+            throw new ResourceConflictException("Error: Email is already in use!", ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         Role userRole = roleRepository.findByName("USER")
@@ -63,10 +64,10 @@ public class UserService {
 
     public AuthResponse registerAdmin(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new ResourceConflictException("Error: Username is already taken!");
+            throw new ResourceConflictException("Error: Username is already taken!", ErrorCode.USERNAME_ALREADY_EXISTS);
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new ResourceConflictException("Error: Email is already in use!");
+            throw new ResourceConflictException("Error: Email is already in use!", ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         Role adminRole = roleRepository.findByName("ADMIN")
@@ -86,7 +87,7 @@ public class UserService {
 
     public UserResponse editUser(Long userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId, ErrorCode.USER_NOT_FOUND));
 
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
@@ -94,7 +95,7 @@ public class UserService {
         // If email changed, check if it's already taken
         if (!user.getEmail().equals(request.getEmail())) {
             if (userRepository.existsByEmail(request.getEmail())) {
-                throw new ResourceConflictException("Error: Email is already in use!");
+                throw new ResourceConflictException("Error: Email is already in use!", ErrorCode.EMAIL_ALREADY_EXISTS);
             }
             user.setEmail(request.getEmail());
         }
@@ -117,7 +118,7 @@ public class UserService {
 
     public UserResponse updateUserStatus(Long userId, boolean isActive) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId, ErrorCode.USER_NOT_FOUND));
 
         user.setActive(isActive);
         

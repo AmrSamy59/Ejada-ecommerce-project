@@ -17,6 +17,11 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.DisabledException;
 import java.io.IOException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ejada.ecommerce.dto.common.ApiErrorResponse;
+import com.ejada.ecommerce.exception.ErrorCode;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 @Component
 @RequiredArgsConstructor
@@ -64,10 +69,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
+        } catch (DisabledException e) {
+            sendErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), "Unauthorized", ErrorCode.UNAUTHORIZED, e.getMessage());
+            return;
         } catch (Exception e) {
-            exceptionResolver.resolveException(request, response, null, e);
+            sendErrorResponse(response, HttpStatus.UNAUTHORIZED.value(), "Unauthorized", ErrorCode.UNAUTHORIZED, e.getMessage());
             return;
         }
         filterChain.doFilter(request, response);
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, int status, String error, ErrorCode errorCode, String message) throws IOException {
+        response.setStatus(status);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        
+        ApiErrorResponse apiError = new ApiErrorResponse(status, error, errorCode, message);
+        ObjectMapper mapper = new ObjectMapper();
+        response.getWriter().write(mapper.writeValueAsString(apiError));
     }
 }

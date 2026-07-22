@@ -3,6 +3,7 @@ package com.ejada.ecommerce.security;
 import com.ejada.ecommerce.entity.RefreshToken;
 import com.ejada.ecommerce.entity.User;
 import com.ejada.ecommerce.exception.InvalidSessionException;
+import com.ejada.ecommerce.exception.ErrorCode;
 import com.ejada.ecommerce.repository.RefreshTokenRepository;
 import com.ejada.ecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +46,7 @@ public class RefreshTokenService {
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
             refreshTokenRepository.delete(token);
-            throw new InvalidSessionException("Refresh token was expired. Please make a new signin request");
+            throw new InvalidSessionException("Refresh token was expired. Please make a new signin request", ErrorCode.TOKEN_EXPIRED);
         }
         return token;
     }
