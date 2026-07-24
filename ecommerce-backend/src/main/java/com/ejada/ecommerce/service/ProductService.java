@@ -4,6 +4,7 @@ import com.ejada.ecommerce.dto.product.ProductRequest;
 import com.ejada.ecommerce.dto.product.ProductResponse;
 import com.ejada.ecommerce.dto.common.PageResponse;
 import com.ejada.ecommerce.entity.Product;
+import com.ejada.ecommerce.entity.ProductStatus;
 import com.ejada.ecommerce.exception.ResourceNotFoundException;
 import com.ejada.ecommerce.exception.ErrorCode;
 import com.ejada.ecommerce.mapper.ProductMapper;
@@ -42,6 +43,11 @@ public class ProductService {
     public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id, ErrorCode.PRODUCT_NOT_FOUND));
+        
+        if (product.getStatus() == ProductStatus.DELETED) {
+            throw new ResourceNotFoundException("Product with id: " + id + " is deleted." , ErrorCode.PRODUCT_DELETED);
+        }
+        
         return productMapper.toDto(product);
     }
 
@@ -55,6 +61,10 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id, ErrorCode.PRODUCT_NOT_FOUND));
 
+        if (product.getStatus() == ProductStatus.DELETED) {
+            throw new ResourceNotFoundException("Product with id: " + id + " is deleted." , ErrorCode.PRODUCT_DELETED);
+        }
+
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
@@ -67,6 +77,12 @@ public class ProductService {
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id, ErrorCode.PRODUCT_NOT_FOUND));
-        productRepository.delete(product);
+        
+        if (product.getStatus() == ProductStatus.DELETED) {
+            throw new ResourceNotFoundException("Product with id: " + id + " is already deleted." , ErrorCode.PRODUCT_DELETED);
+        }
+        
+        product.setStatus(ProductStatus.DELETED);
+        productRepository.save(product);
     }
 }

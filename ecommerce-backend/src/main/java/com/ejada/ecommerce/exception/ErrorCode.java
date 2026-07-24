@@ -3,6 +3,7 @@ package com.ejada.ecommerce.exception;
 public enum ErrorCode {
     USER_NOT_FOUND,
     PRODUCT_NOT_FOUND,
+    PRODUCT_DELETED,
     ORDER_NOT_FOUND,
     USERNAME_ALREADY_EXISTS,
     EMAIL_ALREADY_EXISTS,

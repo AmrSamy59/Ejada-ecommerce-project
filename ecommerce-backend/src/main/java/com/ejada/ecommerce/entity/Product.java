@@ -26,4 +26,9 @@ public class Product {
 
     @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private ProductStatus status = ProductStatus.ACTIVE;
 }

@@ -11,5 +11,6 @@ public interface ProductMapper {
     ProductResponse toDto(Product product);
     
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
     Product toEntity(ProductRequest request);
 }

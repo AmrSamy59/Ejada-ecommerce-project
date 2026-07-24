@@ -8,11 +8,15 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ejada.ecommerce.entity.ProductStatus;
+
 public class ProductSpecification {
 
     public static Specification<Product> filterProducts(String name, BigDecimal minPrice, BigDecimal maxPrice) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(criteriaBuilder.equal(root.get("status"), ProductStatus.ACTIVE));
 
             if (StringUtils.hasText(name)) {
                 predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
