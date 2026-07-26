@@ -1,0 +1,21 @@
+<nav class="navbar glass-panel">
+  <div class="container d-flex justify-between align-center">
+    <a routerLink="/" class="brand">Ejada<span class="text-accent">Store</span></a>
+    
+    <div class="nav-links d-flex gap-2 align-center">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      
+      <ng-container *ngIf="authService.currentUser$ | async as user; else notLogged">
+        <a routerLink="/orders" routerLinkActive="active">Orders</a>
+        <div class="user-menu d-flex align-center gap-2">
+          <span class="user-greeting">Hi, {{ user }}</span>
+          <button class="btn-secondary" (click)="logout()">Logout</button>
+        </div>
+      </ng-container>
+      
+      <ng-template #notLogged>
+        <a routerLink="/auth" class="btn-primary">Login / Register</a>
+      </ng-template>
+    </div>
+  </div>
+</nav>

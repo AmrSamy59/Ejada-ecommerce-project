@@ -1,0 +1,36 @@
+<div class="container mt-4 mb-4">
+  <h1 class="mb-4">My <span class="text-accent">Orders</span></h1>
+  
+  <div *ngIf="isLoading" class="text-secondary">
+    Loading your orders...
+  </div>
+  
+  <div *ngIf="!isLoading && orders.length === 0" class="glass-panel text-center">
+    <p class="text-secondary">You haven't placed any orders yet.</p>
+    <button class="btn-primary mt-3" routerLink="/">Browse Products</button>
+  </div>
+  
+  <div class="orders-list" *ngIf="!isLoading && orders.length > 0">
+    <div class="order-card glass-panel mb-3" *ngFor="let order of orders">
+      <div class="order-header d-flex justify-between align-center mb-3">
+        <h3 class="m-0">Order #{{ order.id }}</h3>
+        <span class="status-badge" [ngClass]="order.status.toLowerCase()">{{ order.status }}</span>
+      </div>
+      
+      <div class="order-items">
+        <div class="order-item d-flex justify-between align-center" *ngFor="let item of order.orderItems">
+          <div class="item-info">
+            <span class="item-name">{{ item.product.name }}</span>
+            <span class="item-qty text-secondary">x{{ item.quantity }}</span>
+          </div>
+          <span class="item-price">${{ item.price | number:'1.2-2' }}</span>
+        </div>
+      </div>
+      
+      <div class="order-footer d-flex justify-between align-center mt-3">
+        <span class="order-date text-secondary">{{ order.orderDate | date:'medium' }}</span>
+        <span class="order-total">Total: <span class="text-accent">${{ order.totalAmount | number:'1.2-2' }}</span></span>
+      </div>
+    </div>
+  </div>
+</div>

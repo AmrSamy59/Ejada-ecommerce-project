@@ -1,0 +1,32 @@
+<div class="container mt-4 mb-4">
+  <h1 class="text-center mb-4">Our <span class="text-accent">Products</span></h1>
+  
+  <div *ngIf="isLoading" class="text-center text-secondary">
+    Loading premium products...
+  </div>
+  
+  <div *ngIf="!isLoading && products.length === 0" class="text-center text-secondary">
+    No products found.
+  </div>
+  
+  <div class="product-grid" *ngIf="!isLoading && products.length > 0">
+    <div class="product-card glass-panel" *ngFor="let product of products">
+      <div class="product-image-placeholder">
+        <span class="product-icon">📦</span>
+      </div>
+      <div class="product-details">
+        <h3 class="product-title">{{ product.name }}</h3>
+        <p class="product-desc">{{ product.description }}</p>
+        <div class="product-meta d-flex justify-between align-center mt-3">
+          <span class="product-price">${{ product.price | number:'1.2-2' }}</span>
+          <button class="btn-primary" (click)="addToCart(product)" [disabled]="addingToCart === product.id">
+            {{ addingToCart === product.id ? 'Adding...' : 'Add to Cart' }}
+          </button>
+        </div>
+        <div class="stock-info mt-1" [class.low-stock]="product.stockQuantity < 5">
+          {{ product.stockQuantity > 0 ? product.stockQuantity + ' in stock' : 'Out of stock' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

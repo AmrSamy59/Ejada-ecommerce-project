@@ -1,0 +1,50 @@
+<div class="auth-container container">
+  <div class="glass-panel auth-panel">
+    <h2 class="text-center">{{ isLogin ? 'Welcome Back' : 'Create an Account' }}</h2>
+    <p class="text-center text-secondary mb-4">
+      {{ isLogin ? 'Login to access your orders and more.' : 'Join EjadaStore for premium products.' }}
+    </p>
+
+    <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+      
+      <ng-container *ngIf="!isLogin">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" formControlName="firstName" class="form-control" placeholder="John">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" formControlName="lastName" class="form-control" placeholder="Doe">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" formControlName="email" class="form-control" placeholder="john@example.com">
+        </div>
+      </ng-container>
+
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" formControlName="username" class="form-control" placeholder="johndoe">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" formControlName="password" class="form-control" placeholder="••••••••">
+      </div>
+
+      <div *ngIf="errorMsg" class="error-alert mb-3">
+        {{ errorMsg }}
+      </div>
+
+      <button type="submit" class="btn-primary w-100" [disabled]="authForm.invalid || isLoading">
+        {{ isLoading ? 'Processing...' : (isLogin ? 'Login' : 'Sign Up') }}
+      </button>
+    </form>
+
+    <div class="text-center mt-4">
+      <button type="button" class="btn-link" (click)="toggleMode()">
+        {{ isLogin ? 'Need an account? Sign Up' : 'Already have an account? Login' }}
+      </button>
+    </div>
+  </div>
+</div>

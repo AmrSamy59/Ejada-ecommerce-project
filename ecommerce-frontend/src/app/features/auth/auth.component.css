@@ -1,0 +1,30 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+}
+.auth-panel {
+  width: 100%;
+  max-width: 450px;
+}
+.w-100 {
+  width: 100%;
+}
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.btn-link:hover {
+  text-decoration: underline;
+}
+.error-alert {
+  color: var(--danger-color);
+  font-size: 0.9rem;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+}
