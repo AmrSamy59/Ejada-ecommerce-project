@@ -2,4 +2,4 @@
 *.xlsx
 *.pdf
 aa-version/
-
+.env
