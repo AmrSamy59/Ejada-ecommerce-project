@@ -20,4 +20,6 @@ public class ProductRequest {
     @NotNull(message = "Stock quantity is required")
     @Min(value = 0, message = "Stock quantity must be non-negative")
     private Integer stockQuantity;
+    
+    private String imageUrl;
 }

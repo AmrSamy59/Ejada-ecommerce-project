@@ -10,7 +10,10 @@
     <div class="cart-items flex-2">
       <div class="cart-item glass-panel d-flex justify-between align-center mb-3 p-3" *ngFor="let item of cartItems">
         <div class="item-details d-flex align-center gap-3">
-          <div class="item-icon">📦</div>
+          <img *ngIf="item.product.imageUrl; else cartPlaceholder" [src]="item.product.imageUrl" class="cart-item-image" [alt]="item.product.name">
+          <ng-template #cartPlaceholder>
+            <div class="item-icon">📦</div>
+          </ng-template>
           <div>
             <h3 class="m-0">{{ item.product.name }}</h3>
             <div class="text-secondary text-sm">${{ item.product.price | number:'1.2-2' }} each</div>

@@ -8,6 +8,7 @@ export interface Product {
   description: string;
   price: number;
   stockQuantity: number;
+  imageUrl?: string;
 }
 
 export interface ProductResponse {

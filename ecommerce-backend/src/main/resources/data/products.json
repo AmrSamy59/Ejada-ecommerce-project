@@ -3,30 +3,35 @@
     "name": "MacBook Pro M3",
     "description": "Latest Apple MacBook Pro with M3 chip, 16GB RAM, 512GB SSD",
     "price": 1999.99,
-    "stockQuantity": 50
+    "stockQuantity": 50,
+    "imageUrl": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=1000"
   },
   {
     "name": "Sony WH-1000XM5",
     "description": "Premium noise-canceling wireless headphones",
     "price": 399.99,
-    "stockQuantity": 120
+    "stockQuantity": 120,
+    "imageUrl": "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&q=80&w=1000"
   },
   {
     "name": "Samsung Galaxy S24 Ultra",
     "description": "Flagship Android smartphone with AI features and 1TB storage",
     "price": 1299.99,
-    "stockQuantity": 80
+    "stockQuantity": 80,
+    "imageUrl": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&q=80&w=1000"
   },
   {
     "name": "Keychron Q1 Pro",
     "description": "Wireless custom mechanical keyboard with aluminum body",
     "price": 199.99,
-    "stockQuantity": 30
+    "stockQuantity": 30,
+    "imageUrl": "https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&q=80&w=1000"
   },
   {
     "name": "Dell UltraSharp 32 4K Monitor",
     "description": "32-inch 4K USB-C hub monitor for professionals",
     "price": 899.99,
-    "stockQuantity": 45
+    "stockQuantity": 45,
+    "imageUrl": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=1000"
   }
 ]
