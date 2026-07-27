@@ -5,11 +5,12 @@
     <div class="nav-links d-flex gap-2 align-center">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
       
+      <a routerLink="/cart" routerLinkActive="active" class="cart-link">
+        Cart 
+        <span class="badge" *ngIf="(cartService.cartItems$ | async)?.length as count">{{ count }}</span>
+      </a>
+
       <ng-container *ngIf="authService.currentUser$ | async as user; else notLogged">
-        <a routerLink="/cart" routerLinkActive="active" class="cart-link">
-          Cart 
-          <span class="badge" *ngIf="(cartService.cartItems$ | async)?.length as count">{{ count }}</span>
-        </a>
         <a routerLink="/orders" routerLinkActive="active">Orders</a>
         <div class="user-menu d-flex align-center gap-2">
           <span class="user-greeting">Hi, {{ user }}</span>

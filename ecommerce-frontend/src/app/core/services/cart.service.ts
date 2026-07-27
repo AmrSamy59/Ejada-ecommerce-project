@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 export interface CartItem {
   product: any;
@@ -10,13 +11,49 @@ export interface CartItem {
   providedIn: 'root'
 })
 export class CartService {
-  private cartItemsSubject = new BehaviorSubject<CartItem[]>(this.loadCart());
+  private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
   public cartItems$ = this.cartItemsSubject.asObservable();
+  
+  private authService = inject(AuthService);
+  private currentCartKey = 'cart_guest';
 
-  constructor() {}
+  constructor() {
+    this.authService.currentUser$.subscribe(username => {
+      if (username) {
+        this.handleUserLogin(`cart_${username}`);
+      } else {
+        this.currentCartKey = 'cart_guest';
+        this.cartItemsSubject.next(this.loadCart());
+      }
+    });
+  }
 
-  private loadCart(): CartItem[] {
-    const saved = localStorage.getItem('cart');
+  private handleUserLogin(userCartKey: string): void {
+    const guestCart = this.loadCartKey('cart_guest');
+    this.currentCartKey = userCartKey;
+    const userCart = this.loadCartKey(userCartKey);
+    
+    // Merge guest cart into user cart if guest cart has items
+    if (guestCart.length > 0) {
+      guestCart.forEach(guestItem => {
+        const existingItem = userCart.find(ui => ui.product.id === guestItem.product.id);
+        if (existingItem) {
+          existingItem.quantity += guestItem.quantity;
+        } else {
+          userCart.push(guestItem);
+        }
+      });
+      // Clear guest cart after merge
+      localStorage.removeItem('cart_guest');
+      this.saveCart(userCart);
+    } else {
+      // Just load the user's cart
+      this.cartItemsSubject.next(userCart);
+    }
+  }
+
+  private loadCartKey(key: string): CartItem[] {
+    const saved = localStorage.getItem(key);
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -27,8 +64,12 @@ export class CartService {
     return [];
   }
 
+  private loadCart(): CartItem[] {
+    return this.loadCartKey(this.currentCartKey);
+  }
+
   private saveCart(items: CartItem[]): void {
-    localStorage.setItem('cart', JSON.stringify(items));
+    localStorage.setItem(this.currentCartKey, JSON.stringify(items));
     this.cartItemsSubject.next(items);
   }
 

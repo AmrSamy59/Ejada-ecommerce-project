@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { CartService, CartItem } from '../../core/services/cart.service';
 import { OrderService } from '../../core/services/order.service';
+import { AuthService } from '../../core/services/auth.service';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-cart',
@@ -17,6 +19,7 @@ export class CartComponent implements OnInit {
   
   private cartService = inject(CartService);
   private orderService = inject(OrderService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   ngOnInit(): void {
@@ -31,15 +34,23 @@ export class CartComponent implements OnInit {
 
   updateQuantity(productId: number, quantity: number): void {
     this.cartService.updateQuantity(productId, quantity);
+    toast.success('Cart updated');
   }
 
   removeItem(productId: number): void {
     this.cartService.removeFromCart(productId);
+    toast.success('Item removed');
   }
 
   checkout(): void {
     if (this.cartItems.length === 0) return;
     
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/auth']);
+      toast.error('Please log in to complete your purchase.');
+      return;
+    }
+
     this.isCheckingOut = true;
     const request = {
       items: this.cartItems.map(item => ({
@@ -51,13 +62,13 @@ export class CartComponent implements OnInit {
     this.orderService.placeOrder(request).subscribe({
       next: () => {
         this.cartService.clearCart();
-        alert('Order placed successfully!');
+        toast.success('Order placed successfully!');
         this.isCheckingOut = false;
         this.router.navigate(['/orders']);
       },
       error: (err) => {
         console.error('Checkout failed', err);
-        alert('Failed to place order. Please try again.');
+        toast.error('Failed to place order. Please try again.');
         this.isCheckingOut = false;
       }
     });
