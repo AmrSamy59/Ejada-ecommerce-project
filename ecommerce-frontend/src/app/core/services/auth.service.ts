@@ -60,6 +60,17 @@ export class AuthService {
   }
 
   logout(): void {
+    if (this.isLoggedIn()) {
+      this.http.post(`${this.apiUrl}/auth/logout`, {}).subscribe({
+        next: () => this.clearSession(),
+        error: () => this.clearSession()
+      });
+    } else {
+      this.clearSession();
+    }
+  }
+
+  private clearSession(): void {
     localStorage.removeItem('jwt_token');
     this.currentUserSubject.next(null);
   }

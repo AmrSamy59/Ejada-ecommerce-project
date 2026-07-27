@@ -6,6 +6,7 @@ import com.ejada.ecommerce.dto.common.PageResponse;
 import com.ejada.ecommerce.entity.Product;
 import com.ejada.ecommerce.entity.ProductStatus;
 import com.ejada.ecommerce.exception.ResourceNotFoundException;
+import com.ejada.ecommerce.exception.ResourceConflictException;
 import com.ejada.ecommerce.exception.ErrorCode;
 import com.ejada.ecommerce.mapper.ProductMapper;
 import com.ejada.ecommerce.repository.ProductRepository;
@@ -52,6 +53,9 @@ public class ProductService {
     }
 
     public ProductResponse createProduct(ProductRequest request) {
+        if (productRepository.existsByName(request.getName())) {
+            throw new ResourceConflictException("Product name is already taken!", ErrorCode.PRODUCT_NAME_ALREADY_EXISTS);
+        }
         Product product = productMapper.toEntity(request);
         Product savedProduct = productRepository.save(product);
         return productMapper.toDto(savedProduct);
@@ -65,12 +69,18 @@ public class ProductService {
             throw new ResourceNotFoundException("Product with id: " + id + " is deleted." , ErrorCode.PRODUCT_DELETED);
         }
 
+        if (!product.getName().equals(request.getName()) && productRepository.existsByName(request.getName())) {
+            throw new ResourceConflictException("Product name is already taken!", ErrorCode.PRODUCT_NAME_ALREADY_EXISTS);
+        }
+
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setStockQuantity(request.getStockQuantity());
+        product.setImageUrl(request.getImageUrl());
 
         Product updatedProduct = productRepository.save(product);
+
         return productMapper.toDto(updatedProduct);
     }
 

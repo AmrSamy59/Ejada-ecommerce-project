@@ -12,6 +12,6 @@ import com.ejada.ecommerce.exception.ErrorCode;
 public class ApiErrorResponse {
     private int status;
     private String error;
-    private ErrorCode errorCode;
+    private ErrorCode code;
     private Object message;
 }

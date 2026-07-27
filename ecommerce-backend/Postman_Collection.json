@@ -107,6 +107,22 @@
           }
         },
         {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/auth/logout",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "auth", "logout"]
+            }
+          }
+        },
+        {
           "name": "Register Admin (Requires Super Admin)",
           "request": {
             "method": "POST",

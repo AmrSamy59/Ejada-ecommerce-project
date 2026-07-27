@@ -54,4 +54,13 @@ public class AuthController {
                 })
                 .orElseThrow(() -> new InvalidSessionException("Refresh token is not in database!", ErrorCode.TOKEN_INVALID));
     }
+
+    @PostMapping("/logout")
+    @Operation(summary = "Logout user and invalidate refresh tokens")
+    public ResponseEntity<?> logout(@org.springframework.security.core.annotation.AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails != null) {
+            refreshTokenService.deleteByUserId(userDetails.getId());
+        }
+        return ResponseEntity.ok(java.util.Map.of("message", "Log out successful!"));
+    }
 }
