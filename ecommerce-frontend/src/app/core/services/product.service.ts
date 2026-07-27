@@ -10,16 +10,13 @@ export interface Product {
   stockQuantity: number;
 }
 
-export interface PageInfo {
-  number: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
-}
-
 export interface ProductResponse {
   content: Product[];
-  page: PageInfo;
+  pageNo: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
 }
 
 @Injectable({

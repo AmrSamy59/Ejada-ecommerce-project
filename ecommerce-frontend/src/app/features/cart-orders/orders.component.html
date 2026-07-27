@@ -33,4 +33,11 @@
       </div>
     </div>
   </div>
+  
+  <app-pagination 
+    *ngIf="!isLoading"
+    [currentPage]="currentPage" 
+    [totalPages]="totalPages" 
+    (pageChange)="loadOrders($event)">
+  </app-pagination>
 </div>

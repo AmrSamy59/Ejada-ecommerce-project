@@ -29,4 +29,12 @@
       </div>
     </div>
   </div>
+
+  <!-- Pagination Controls -->
+  <app-pagination 
+    *ngIf="!isLoading"
+    [currentPage]="currentPage" 
+    [totalPages]="totalPages" 
+    (pageChange)="loadProducts($event)">
+  </app-pagination>
 </div>
