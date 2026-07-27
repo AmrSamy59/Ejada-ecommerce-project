@@ -1,7 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductService, Product } from '../../core/services/product.service';
-import { OrderService } from '../../core/services/order.service';
+import { ProductService } from '../../core/services/product.service';
+import { AuthService } from '../../core/services/auth.service';
+import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-home',
@@ -11,17 +12,18 @@ import { OrderService } from '../../core/services/order.service';
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
-  products: Product[] = [];
+  products: any[] = [];
   isLoading = true;
   addingToCart: number | null = null;
-  
+
   private productService = inject(ProductService);
-  private orderService = inject(OrderService);
+  private authService = inject(AuthService);
+  private cartService = inject(CartService);
 
   ngOnInit(): void {
-    this.productService.getProducts(0, 20).subscribe({
+    this.productService.getProducts(0, 50).subscribe({
       next: (res) => {
-        this.products = res.content;
+        this.products = res.content || res;
         this.isLoading = false;
       },
       error: (err) => {
@@ -31,22 +33,18 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  addToCart(product: Product) {
-    if (!localStorage.getItem('jwt_token')) {
-      alert('Please login first to add items to cart.');
+  addToCart(product: any) {
+    if (!this.authService.isLoggedIn()) {
+      alert('Please login to add items to your cart.');
       return;
     }
     
     this.addingToCart = product.id;
-    this.orderService.placeOrder({ items: [{ productId: product.id, quantity: 1 }] }).subscribe({
-      next: () => {
-        alert(`Order for ${product.name} placed successfully!`);
-        this.addingToCart = null;
-      },
-      error: (err) => {
-        alert('Failed to place order. You might be out of stock or need to login again.');
-        this.addingToCart = null;
-      }
-    });
+    this.cartService.addToCart(product);
+    
+    // Simulate slight delay for UI feedback
+    setTimeout(() => {
+      this.addingToCart = null;
+    }, 500);
   }
 }

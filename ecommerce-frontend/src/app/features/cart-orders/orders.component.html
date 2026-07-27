@@ -18,12 +18,12 @@
       </div>
       
       <div class="order-items">
-        <div class="order-item d-flex justify-between align-center" *ngFor="let item of order.orderItems">
+        <div class="order-item d-flex justify-between align-center" *ngFor="let item of order.items">
           <div class="item-info">
-            <span class="item-name">{{ item.product.name }}</span>
+            <span class="item-name">{{ item.productName }}</span>
             <span class="item-qty text-secondary">x{{ item.quantity }}</span>
           </div>
-          <span class="item-price">${{ item.price | number:'1.2-2' }}</span>
+          <span class="item-price">${{ item.priceAtPurchase | number:'1.2-2' }}</span>
         </div>
       </div>
       

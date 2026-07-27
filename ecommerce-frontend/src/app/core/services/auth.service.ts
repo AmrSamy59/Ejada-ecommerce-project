@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError } from 'rxjs';
 
 export interface User {
   username: string;
@@ -27,10 +27,21 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    const token = this.getToken();
-    if (token) {
-      this.currentUserSubject.next('User');
+    if (this.getToken()) {
+      this.fetchCurrentUser().subscribe();
     }
+  }
+
+  private fetchCurrentUser(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/me`).pipe(
+      tap(user => {
+        this.currentUserSubject.next(user.username);
+      }),
+      catchError(() => {
+        this.logout();
+        return [];
+      })
+    );
   }
 
   login(credentials: any): Observable<AuthResponse> {
