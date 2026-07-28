@@ -80,19 +80,8 @@ public class OrderService {
         return orderMapper.toDto(savedOrder);
     }
 
-    public PageResponse<OrderResponse> getUserOrders(Long userId, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Order> orders = orderRepository.findByUserId(userId, pageable);
-        
-        List<OrderResponse> content = orders.getContent().stream()
-                .map(orderMapper::toDto)
-                .collect(Collectors.toList());
-                
-        return new PageResponse<>(content, orders.getNumber(), orders.getSize(), orders.getTotalElements(), orders.getTotalPages(), orders.isLast());
-    }
-
-    public PageResponse<OrderResponse> getAllOrders(LocalDateTime dateFrom, LocalDateTime dateTo, String userName, OrderStatus orderStatus, int pageNo, int pageSize) {
-        Specification<Order> spec = OrderSpecification.filterOrders(dateFrom, dateTo, userName, orderStatus);
+    public PageResponse<OrderResponse> getOrders(Long userId, String userName, LocalDateTime dateFrom, LocalDateTime dateTo, OrderStatus orderStatus, int pageNo, int pageSize) {
+        Specification<Order> spec = OrderSpecification.filterOrders(dateFrom, dateTo, userName, orderStatus, userId);
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Order> orders = orderRepository.findAll(spec, pageable);
         

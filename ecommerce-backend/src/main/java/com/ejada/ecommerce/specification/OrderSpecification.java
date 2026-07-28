@@ -12,9 +12,14 @@ import java.util.List;
 
 public class OrderSpecification {
 
-    public static Specification<Order> filterOrders(LocalDateTime dateFrom, LocalDateTime dateTo, String userName, OrderStatus orderStatus) {
+    public static Specification<Order> filterOrders(LocalDateTime dateFrom, LocalDateTime dateTo, String userName, OrderStatus orderStatus, Long userId) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            if (userId != null) {
+                Join<Object, Object> userJoin = root.join("user");
+                predicates.add(criteriaBuilder.equal(userJoin.get("id"), userId));
+            }
 
             if (dateFrom != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("orderDate"), dateFrom));

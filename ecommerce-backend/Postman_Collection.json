@@ -149,6 +149,22 @@
       "name": "Users",
       "item": [
         {
+          "name": "Get Current User (/me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/users/me",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "users", "me"]
+            }
+          }
+        },
+        {
           "name": "Get All Users (ADMIN)",
           "request": {
             "method": "GET",
@@ -361,6 +377,9 @@
               "port": "8081",
               "path": ["api", "orders"],
               "query": [
+                { "key": "dateFrom", "value": "2024-01-01T00:00:00", "disabled": true },
+                { "key": "dateTo", "value": "2024-12-31T23:59:59", "disabled": true },
+                { "key": "orderStatus", "value": "PENDING", "disabled": true },
                 { "key": "page", "value": "0" },
                 { "key": "size", "value": "10" }
               ]

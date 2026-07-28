@@ -44,9 +44,12 @@ public class OrderController {
     @Operation(summary = "Get current user's orders")
     public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
             @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTo,
+            @RequestParam(required = false) OrderStatus orderStatus,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(orderService.getUserOrders(userDetails.getId(), page, size));
+        return ResponseEntity.ok(orderService.getOrders(userDetails.getId(), null, dateFrom, dateTo, orderStatus, page, size));
     }
 
     @GetMapping("/all")
@@ -59,7 +62,7 @@ public class OrderController {
             @RequestParam(required = false) OrderStatus orderStatus,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(orderService.getAllOrders(dateFrom, dateTo, userName, orderStatus, page, size));
+        return ResponseEntity.ok(orderService.getOrders(null, userName, dateFrom, dateTo, orderStatus, page, size));
     }
 
     @PatchMapping("/{id}/status")
