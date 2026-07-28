@@ -40,8 +40,7 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void seedRoles() {
-        List<String> rolesToSeed = List.of("USER", "ADMIN", "SUPER_ADMIN");
-        for (String roleName : rolesToSeed) {
+        for (com.ejada.ecommerce.entity.RoleName roleName : com.ejada.ecommerce.entity.RoleName.values()) {
             if (roleRepository.findByName(roleName).isEmpty()) {
                 roleRepository.save(Role.builder().name(roleName).build());
             }
@@ -57,7 +56,7 @@ public class DataSeeder implements CommandLineRunner {
             for (UserSeedData seedData : seedUsers) {
                 if (!userRepository.existsByUsername(seedData.getUsername())) {
                     Set<Role> userRoles = seedData.getRoles().stream()
-                            .map(roleName -> roleRepository.findByName(roleName).orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
+                            .map(roleNameStr -> roleRepository.findByName(com.ejada.ecommerce.entity.RoleName.valueOf(roleNameStr)).orElseThrow(() -> new RuntimeException("Role not found: " + roleNameStr)))
                             .collect(Collectors.toSet());
                             
                     User user = User.builder()

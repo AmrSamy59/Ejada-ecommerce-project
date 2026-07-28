@@ -6,6 +6,7 @@ import com.ejada.ecommerce.dto.common.PageResponse;
 import com.ejada.ecommerce.dto.user.UpdateUserRequest;
 import com.ejada.ecommerce.dto.user.UserResponse;
 import com.ejada.ecommerce.entity.Role;
+import com.ejada.ecommerce.entity.RoleName;
 import com.ejada.ecommerce.entity.User;
 import com.ejada.ecommerce.exception.ResourceConflictException;
 import com.ejada.ecommerce.exception.ResourceNotFoundException;
@@ -48,8 +49,8 @@ public class UserService {
             throw new ResourceConflictException("Error: Email is already in use!", ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        Role userRole = roleRepository.findByName("USER")
-                .orElseGet(() -> roleRepository.save(Role.builder().name("USER").build()));
+        Role userRole = roleRepository.findByName(RoleName.USER)
+                .orElseGet(() -> roleRepository.save(Role.builder().name(RoleName.USER).build()));
 
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -71,8 +72,8 @@ public class UserService {
             throw new ResourceConflictException("Error: Email is already in use!", ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
-        Role adminRole = roleRepository.findByName("ADMIN")
-                .orElseGet(() -> roleRepository.save(Role.builder().name("ADMIN").build()));
+        Role adminRole = roleRepository.findByName(RoleName.ADMIN)
+                .orElseGet(() -> roleRepository.save(Role.builder().name(RoleName.ADMIN).build()));
 
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -121,7 +122,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId, ErrorCode.USER_NOT_FOUND));
 
-        if (!isActive && user.hasRole("SUPER_ADMIN")) {
+        if (!isActive && user.hasRole(RoleName.SUPER_ADMIN)) {
             throw new AccessDeniedException("Super Admin cannot be deactivated.");
         }
 

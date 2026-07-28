@@ -20,6 +20,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import static com.ejada.ecommerce.entity.RoleName.*;
+
 @RestController
 @RequestMapping("/api/orders")
 @Tag(name = "Orders", description = "Endpoints for order management")
@@ -29,7 +31,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + USER_STR + "', '" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Place a new order")
     public ResponseEntity<OrderResponse> placeOrder(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -38,7 +40,7 @@ public class OrderController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + USER_STR + "', '" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Get current user's orders")
     public ResponseEntity<PageResponse<OrderResponse>> getMyOrders(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -48,7 +50,7 @@ public class OrderController {
     }
 
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Get all orders (Admin only)")
     public ResponseEntity<PageResponse<OrderResponse>> getAllOrders(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFrom,
@@ -61,7 +63,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Update order status (Admin only)")
     public ResponseEntity<OrderResponse> updateOrderStatus(
             @PathVariable Long id,

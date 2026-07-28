@@ -18,6 +18,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.ejada.ecommerce.security.CustomUserDetails;
 
+import static com.ejada.ecommerce.entity.RoleName.*;
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -40,14 +42,14 @@ public class UserController {
     }
 
     @PostMapping("/register-admin")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Register a new admin (Super Admin only)")
     public ResponseEntity<AuthResponse> registerAdmin(@Valid @RequestBody RegisterRequest request) {
         return new ResponseEntity<>(userService.registerAdmin(request), HttpStatus.CREATED);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Get all users with optional filters (Admin only)")
     public ResponseEntity<PageResponse<UserResponse>> getAllUsers(
             @RequestParam(required = false) String name,
@@ -59,7 +61,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Edit a user's details (Admin only)")
     public ResponseEntity<UserResponse> editUser(
             @PathVariable Long id,
@@ -68,14 +70,14 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/activate")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Activate a user account (Admin only)")
     public ResponseEntity<UserResponse> activateUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.updateUserStatus(id, true));
     }
 
     @PatchMapping("/{id}/deactivate")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Deactivate a user account (Admin only)")
     public ResponseEntity<UserResponse> deactivateUser(@PathVariable Long id) {
         return ResponseEntity.ok(userService.updateUserStatus(id, false));

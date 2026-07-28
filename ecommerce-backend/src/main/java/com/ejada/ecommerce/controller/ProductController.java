@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import static com.ejada.ecommerce.entity.RoleName.*;
+
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
@@ -42,21 +44,21 @@ public class ProductController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Create a new product (Admin only)")
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request) {
         return new ResponseEntity<>(productService.createProduct(request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Update an existing product (Admin only)")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest request) {
         return ResponseEntity.ok(productService.updateProduct(id, request));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('" + ADMIN_STR + "', '" + SUPER_ADMIN_STR + "')")
     @Operation(summary = "Delete a product by ID (Admin only)")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);

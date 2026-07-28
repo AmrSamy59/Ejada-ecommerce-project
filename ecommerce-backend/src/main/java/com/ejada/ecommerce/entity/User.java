@@ -44,7 +44,7 @@ public class User {
     @Builder.Default
     private boolean isActive = true;
 
-    public boolean hasRole(String roleName) {
-        return roles.stream().anyMatch(role -> role.getName().equals(roleName));
+    public boolean hasRole(RoleName roleName) {
+        return roles.stream().anyMatch(role -> role.getName() == roleName);
     }
 }
