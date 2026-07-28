@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -119,6 +120,10 @@ public class UserService {
     public UserResponse updateUserStatus(Long userId, boolean isActive) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId, ErrorCode.USER_NOT_FOUND));
+
+        if (!isActive && user.hasRole("SUPER_ADMIN")) {
+            throw new AccessDeniedException("Super Admin cannot be deactivated.");
+        }
 
         user.setActive(isActive);
         

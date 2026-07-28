@@ -22,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
+import com.ejada.ecommerce.specification.OrderSpecification;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -89,9 +91,10 @@ public class OrderService {
         return new PageResponse<>(content, orders.getNumber(), orders.getSize(), orders.getTotalElements(), orders.getTotalPages(), orders.isLast());
     }
 
-    public PageResponse<OrderResponse> getAllOrders(int pageNo, int pageSize) {
+    public PageResponse<OrderResponse> getAllOrders(LocalDateTime dateFrom, LocalDateTime dateTo, String userName, OrderStatus orderStatus, int pageNo, int pageSize) {
+        Specification<Order> spec = OrderSpecification.filterOrders(dateFrom, dateTo, userName, orderStatus);
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Order> orders = orderRepository.findAll(pageable);
+        Page<Order> orders = orderRepository.findAll(spec, pageable);
         
         List<OrderResponse> content = orders.getContent().stream()
                 .map(orderMapper::toDto)

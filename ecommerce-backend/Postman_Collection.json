@@ -381,6 +381,10 @@
               "port": "8081",
               "path": ["api", "orders", "all"],
               "query": [
+                { "key": "dateFrom", "value": "2024-01-01T00:00:00", "disabled": true },
+                { "key": "dateTo", "value": "2024-12-31T23:59:59", "disabled": true },
+                { "key": "userName", "value": "test", "disabled": true },
+                { "key": "orderStatus", "value": "PENDING", "disabled": true },
                 { "key": "page", "value": "0" },
                 { "key": "size", "value": "10" }
               ]
